@@ -1,12 +1,12 @@
 "use client";
 
-import { CartItem, Product } from "@/types";
+import { CartItem } from "@/types";
 import React, { createContext, useCallback, useState } from "react";
 
 type Props = { children: React.ReactNode };
 
 interface CartContextType {
-  items: Product[];
+  items: CartItem[];
   addItem: (product: CartItem) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -63,7 +63,7 @@ const CartProvider = ({ children }: Props) => {
   }, []);
 
   const cartTotal = items.reduce(
-    (total, item) => total + parseInt(item.price.slice(1)) * item.quantity,
+    (total, item) => total + parseInt(item.price) * item.quantity,
     0
   );
 

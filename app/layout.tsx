@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import CartProvider from "@/providers/cart-context";
+import Navbar from "@/components/navbar";
 
 const geistMono = Geist_Mono({
   weight: "400",
@@ -21,7 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistMono.className} antialiased`}>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <Navbar />
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
