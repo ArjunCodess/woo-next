@@ -32,13 +32,13 @@ const AddToCartButton = ({ product }: AddToCartButtonProps) => {
       disabled={isAdding}
       size="lg"
       variant="default"
-      className="w-full text-base py-6"
+      className="w-full text-sm sm:text-base py-4 sm:py-6 mt-2"
     >
       {isAdding ? (
         "Adding to Cart..."
       ) : (
         <>
-          <ShoppingCart className="mr-2 h-5 w-5" />
+          <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Add to Cart
         </>
       )}
