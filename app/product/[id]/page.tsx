@@ -6,6 +6,10 @@ import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/add-to-cart-button";
 import { Separator } from "@/components/ui/separator";
 import { calculateDiscount } from "@/lib/utils";
+import { Container } from "@/components/ui/container";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -24,50 +28,52 @@ const ProductPage = async (props: Props) => {
 
   return (
     <div className="py-10">
-      <div className="container mx-auto px-4">
-        <Link
-          href="/"
-          className="inline-flex items-center text-lg font-medium mb-8 hover:text-neutral-600"
-        >
-          ← Back to products
-        </Link>
+      <Container>
+        <Button variant="ghost" size="sm" className="group mb-8" asChild>
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to products
+          </Link>
+        </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
-          <div className="relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="rounded-lg overflow-hidden border relative aspect-square md:aspect-auto">
             {product.images[0]?.src ? (
               <Image
                 src={product.images[0].src}
                 alt={product.images[0].alt || product.name}
-                width={800}
-                height={800}
-                className="max-w-full h-full object-contain my-auto"
+                fill
+                className="object-contain"
                 priority
               />
             ) : (
-              <div className="rounded-lg bg-neutral-100 flex items-center justify-center h-[50vh]">
-                <p className="text-neutral-500">No image available</p>
+              <div className="h-full w-full bg-muted flex items-center justify-center">
+                <p className="text-muted-foreground">No image available</p>
               </div>
             )}
             {product.on_sale && (
-              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-md font-medium">
+              <Badge
+                variant="destructive"
+                className="absolute top-4 left-4 px-3 py-1 text-sm font-medium"
+              >
                 {discountPercentage}% OFF
-              </div>
+              </Badge>
             )}
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col border rounded-lg p-8">
             <div>
               <div className="flex flex-row items-baseline justify-between">
                 <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
                 {product.on_sale ? (
-                  <div className="flex flex-col items-end mb-4">
-                    <div className="text-2xl font-bold text-red-500">
-                      {CURRENCY_ICON}
-                      {product.sale_price}
-                    </div>
-                    <div className="text-lg text-neutral-500 line-through">
+                  <div className="flex flex-row items-baseline mb-4 gap-2">
+                    <div className="text-lg text-muted-foreground line-through">
                       {CURRENCY_ICON}
                       {product.regular_price}
+                    </div>
+                    <div className="text-2xl font-bold text-destructive">
+                      {CURRENCY_ICON}
+                      {product.sale_price}
                     </div>
                   </div>
                 ) : (
@@ -80,7 +86,7 @@ const ProductPage = async (props: Props) => {
 
               {product.short_description && (
                 <div
-                  className="text-neutral-600"
+                  className="text-muted-foreground"
                   dangerouslySetInnerHTML={{
                     __html: product.short_description,
                   }}
@@ -90,14 +96,13 @@ const ProductPage = async (props: Props) => {
 
             <Separator className="my-8" />
 
-            {product.description && (
-              <>
-                <h2 className="text-xl font-semibold mb-4">Description</h2>
-                <div
-                  className="prose max-w-none text-neutral-700"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
-              </>
+            {product.description ? (
+              <div
+                className="prose max-w-none text-foreground"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            ) : (
+              <p className="text-muted-foreground">No description available</p>
             )}
 
             <Separator className="my-8" />
@@ -105,7 +110,7 @@ const ProductPage = async (props: Props) => {
             <AddToCartButton product={product} />
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { loadStripe } from "@stripe/stripe-js";
+import { toast } from "sonner";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -26,7 +27,6 @@ const Checkout = () => {
       });
 
       const data = await response.json();
-      console.log("Checkout response:", data);
       
       if (!data.sessionId) {
         throw new Error("No sessionId returned from checkout API");
@@ -45,7 +45,9 @@ const Checkout = () => {
       if (error) throw new Error(error.message);
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("Payment failed: " + (error instanceof Error ? error.message : "Unknown error"));
+      toast.error("Checkout failed", {
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+      });
     } finally {
       setLoading(false);
     }
