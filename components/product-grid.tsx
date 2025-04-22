@@ -11,6 +11,15 @@ type Props = {
 };
 
 const ProductGrid = ({ products }: Props) => {
+  // Calculate discount percentage for a product
+  const calculateDiscount = (regular: string, sale: string): number => {
+    if (!regular || !sale) return 0;
+    const regularPrice = parseFloat(regular);
+    const salePrice = parseFloat(sale);
+    if (regularPrice <= 0 || salePrice <= 0) return 0;
+    return Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+  };
+
   return (
     <div className="bg-white">
       <main className="container mx-auto px-4 py-8">
@@ -21,7 +30,7 @@ const ProductGrid = ({ products }: Props) => {
               key={index}
               className="flex flex-col group relative"
             >
-              <div className="aspect-square rounded-md overflow-hidden">
+              <div className="aspect-square rounded-md overflow-hidden relative">
                 <Image
                   src={product.images?.[0]?.src || "/placeholder.svg"}
                   alt={product.name}
@@ -29,6 +38,11 @@ const ProductGrid = ({ products }: Props) => {
                   height={300}
                   className="w-full h-full object-contain"
                 />
+                {product.on_sale && (
+                  <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    {calculateDiscount(product.regular_price, product.sale_price)}% OFF
+                  </div>
+                )}
               </div>
               <div className="group-hover:opacity-100 opacity-0 flex flex-col justify-end">
                 <div className="flex justify-between items-center mb-2">
@@ -36,9 +50,22 @@ const ProductGrid = ({ products }: Props) => {
                     {product.name}
                   </h3>
 
-                  <p className="text-base font-semibold text-primary">
-                    {CURRENCY_ICON}{product.price}
-                  </p>
+                  <div className="text-right">
+                    {product.on_sale ? (
+                      <div className="flex flex-col">
+                        <p className="text-base font-semibold text-red-500">
+                          {CURRENCY_ICON}{product.sale_price}
+                        </p>
+                        <p className="text-xs text-neutral-500 line-through">
+                          {CURRENCY_ICON}{product.regular_price}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-base font-semibold text-primary">
+                        {CURRENCY_ICON}{product.price}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </Link>

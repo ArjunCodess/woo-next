@@ -34,7 +34,7 @@ const AddToCartButton = ({ product }: AddToCartButtonProps) => {
       disabled={isAdding}
       size="lg"
       variant={added ? "secondary" : "default"}
-      className="mt-4 w-full text-base py-6"
+      className="w-full text-base py-6"
     >
       {isAdding ? (
         "Adding to Cart..."
