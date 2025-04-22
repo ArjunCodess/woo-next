@@ -32,7 +32,12 @@ const ProductPage = async (props: Props) => {
   return (
     <div className="py-6 sm:py-10">
       <Container>
-        <Button variant="ghost" size="sm" className="group mb-4 sm:mb-8" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="group mb-4 sm:mb-8"
+          asChild
+        >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             <span className="text-sm sm:text-base">Back to products</span>
@@ -45,9 +50,12 @@ const ProductPage = async (props: Props) => {
           </div>
 
           <div className="flex flex-col my-auto">
+            <Separator className="my-4 md:my-0 md:hidden" />
             <div>
               <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
-                <h1 className="text-xl sm:text-3xl font-bold mb-2">{product.name}</h1>
+                <h1 className="text-xl sm:text-3xl font-bold mb-2">
+                  {product.name}
+                </h1>
                 {product.on_sale ? (
                   <div className="flex flex-row items-baseline mb-4 gap-2">
                     <div className="text-base sm:text-lg text-muted-foreground line-through">
@@ -75,6 +83,10 @@ const ProductPage = async (props: Props) => {
                   }}
                 />
               )}
+
+              <div className="md:hidden block mt-2">
+                <AddToCartButton product={product} />
+              </div>
             </div>
 
             <Separator className="my-4 sm:my-8" />
@@ -88,9 +100,11 @@ const ProductPage = async (props: Props) => {
               <p className="text-muted-foreground">No description available</p>
             )}
 
-            <Separator className="my-4 sm:my-8" />
+            <Separator className="my-4 sm:my-8 hidden md:block" />
 
-            <AddToCartButton product={product} />
+            <div className="hidden md:block">
+              <AddToCartButton product={product} />
+            </div>
           </div>
         </div>
       </Container>

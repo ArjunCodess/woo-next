@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Checkout from "@/components/checkout";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { useCart } from "@/hooks/use-cart";
 import Image from "next/image";
 import { CURRENCY_ICON } from "@/lib/constants";
@@ -17,7 +18,6 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -39,7 +39,22 @@ export default function Navbar() {
     cartTotal,
   } = useCart();
 
-  // Calculate discount percentage
+  const [drawerDirection, setDrawerDirection] = useState<"bottom" | "right">(
+    "bottom"
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDrawerDirection(window.innerWidth >= 768 ? "right" : "bottom");
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const calculateDiscount = (regular: string, sale: string): number => {
     if (!regular || !sale) return 0;
     const regularPrice = parseFloat(regular);
@@ -113,8 +128,12 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
+            <Drawer
+              open={isOpen}
+              onOpenChange={setIsOpen}
+              direction={drawerDirection}
+            >
+              <DrawerTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingCart className="h-5 w-5" />
                   {cartItems.length > 0 && (
@@ -129,20 +148,23 @@ export default function Navbar() {
                     </Badge>
                   )}
                 </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-md py-4 px-6">
-                <SheetHeader>
-                  <SheetTitle>Your Cart</SheetTitle>
-                </SheetHeader>
-                <Separator />
+              </DrawerTrigger>
+              <DrawerContent
+                className={`w-full ${
+                  drawerDirection === "right" ? "max-w-[450px]" : ""
+                }`}
+              >
+                <DrawerHeader className="border-b">
+                  <DrawerTitle>Your Cart</DrawerTitle>
+                </DrawerHeader>
                 {cartItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-[50vh]">
                     <ShoppingCart className="h-12 w-12 text-muted mb-4" />
                     <p className="text-muted-foreground">Your cart is empty</p>
                   </div>
                 ) : (
-                  <div className="flex flex-col h-full py-4">
-                    <div className="flex-1 overflow-auto">
+                  <div className="flex flex-col h-full py-6 px-4">
+                    <div className="flex-1 overflow-auto max-h-[50vh] md:max-h-[70vh]">
                       <ul className="space-y-6">
                         {cartItems.map((item) => (
                           <li key={item.id} className="flex gap-4">
@@ -236,21 +258,22 @@ export default function Navbar() {
                         ))}
                       </ul>
                     </div>
-                    <Separator className="my-4" />
-                    <div className="p-4">
-                      <div className="flex justify-between text-base font-medium mb-4">
-                        <p>Subtotal</p>
-                        <p>
-                          {CURRENCY_ICON}
-                          {cartTotal}
-                        </p>
-                      </div>
-                      <Checkout />
-                    </div>
                   </div>
                 )}
-              </SheetContent>
-            </Sheet>
+                <DrawerFooter className="border-t">
+                  <div>
+                    <div className="flex justify-between text-base font-medium mb-4">
+                      <p>Subtotal</p>
+                      <p>
+                        {CURRENCY_ICON}
+                        {cartTotal}
+                      </p>
+                    </div>
+                    <Checkout />
+                  </div>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
         </div>
       </Container>
