@@ -105,3 +105,26 @@ export type Product = {
 export type CartItem = Product & {
   quantity: number;
 };
+
+export type StripeProduct = {
+  id: string;
+  name: string;
+  images: string[];
+}
+
+export type StripeLineItem = {
+  id: string;
+  quantity: number;
+  amount_total: number;
+  price?: {
+    product: StripeProduct;
+  };
+}
+
+export type StripeSession = {
+  id: string;
+  amount_total: number | null;
+  line_items?: {
+    data: StripeLineItem[];
+  };
+}

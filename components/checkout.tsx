@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
@@ -26,23 +27,13 @@ const Checkout = () => {
         }),
       });
 
-      const data = await response.json();
-      
-      if (!data.sessionId) {
-        throw new Error("No sessionId returned from checkout API");
-      }
-      
+      const { sessionId } = await response.json();
       const stripe = await stripePromise;
-      
-      if (!stripe) {
-        throw new Error("Stripe failed to load");
-      }
-      
-      const { error } = await stripe.redirectToCheckout({ 
-        sessionId: data.sessionId 
-      });
+      const { error } = await stripe!.redirectToCheckout({ sessionId });
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error("Checkout failed", {

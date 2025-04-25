@@ -1,19 +1,20 @@
-import { CURRENCY_NAME } from "@/lib/constants";
-import { CartItem } from "@/types";
-import { stripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
+import { CartItem } from "@/types";
+import { CURRENCY_NAME } from "@/lib/constants";
+import { stripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
   try {
-    const { items } = await req.json();
+    const { items } = await req.json() as { items: CartItem[] };
+    
     const lineItems = items.map((item: CartItem) => ({
       price_data: {
         currency: CURRENCY_NAME,
         product_data: {
           name: item.name,
-          images: item.images,
+          images: item.images.map((image) => image.src),
         },
-        unit_amount: parseInt(item.price) * 100,
+        unit_amount: Math.round(parseFloat(item.price) * 100),
       },
       quantity: item.quantity,
     }));
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
       line_items: lineItems,
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/cancel?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return NextResponse.json({
