@@ -6,7 +6,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { StripeSession } from "@/types";
-import { CURRENCY_ICON } from "@/lib/constants";
+import { CURRENCY_ICON, SUCCESS_METADATA } from "@/lib/constants";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = SUCCESS_METADATA;
 
 async function getStripeSession(
   sessionId: string

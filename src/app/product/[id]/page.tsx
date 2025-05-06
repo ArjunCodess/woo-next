@@ -1,5 +1,5 @@
 import { getProduct } from "@/actions/products";
-import { CURRENCY_ICON } from "@/lib/constants";
+import { CURRENCY_ICON, PRODUCT_METADATA, SITE_NAME } from "@/lib/constants";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/add-to-cart-button";
@@ -8,8 +8,9 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+import { Image } from "@/types";
 
-// Import the gallery component with dynamic loading
 const ProductGallery = dynamic(() => import("@/components/product/gallery"), {
   loading: () => (
     <div className="h-full relative aspect-square md:aspect-auto rounded-lg border bg-muted flex items-center justify-center">
@@ -21,6 +22,69 @@ const ProductGallery = dynamic(() => import("@/components/product/gallery"), {
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProduct(id);
+
+  if (!product) {
+    return PRODUCT_METADATA;
+  }
+
+  const cleanDescription = product.short_description
+    ? product.short_description
+        .replace(/<[^>]*>/g, "")
+        .replace(/&#8216;/g, "'")
+        .replace(/&#8217;/g, "'")
+    : `View details and pricing for ${product.name}`;
+
+  const defaultImages = PRODUCT_METADATA.openGraph?.images || [];
+
+  const productImages: {
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+  }[] = [];
+  if (
+    product.images &&
+    Array.isArray(product.images) &&
+    product.images.length > 0
+  ) {
+    product.images.forEach((image: Image) => {
+      if (image.src) {
+        productImages.push({
+          url: image.src,
+          width: 800,
+          height: 600,
+          alt: image.alt || product.name || "Product image",
+        });
+      }
+    });
+  }
+
+  const ogImages = productImages.length > 0 ? productImages : defaultImages;
+
+  return {
+    ...PRODUCT_METADATA,
+    title: `${product.name} | ${SITE_NAME}`,
+    description: cleanDescription,
+    alternates: {
+      canonical: `/product/${id}`,
+    },
+    openGraph: {
+      ...PRODUCT_METADATA.openGraph,
+      title: `${product.name} | ${SITE_NAME}`,
+      description: cleanDescription,
+      images: ogImages,
+    },
+    twitter: {
+      ...PRODUCT_METADATA.twitter,
+      title: `${product.name} | ${SITE_NAME}`,
+      description: cleanDescription,
+    },
+  };
+}
 
 const ProductPage = async (props: Props) => {
   const params = await props.params;

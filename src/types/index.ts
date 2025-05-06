@@ -1,3 +1,10 @@
+export type Image = {
+  id: number;
+  src: string;
+  name: string;
+  alt: string;
+}
+
 export type Product = {
   id: number;
   name: string;
@@ -73,12 +80,7 @@ export type Product = {
     name: string;
     slug: string;
   }[];
-  images: {
-    id: number;
-    src: string;
-    name: string;
-    alt: string;
-  }[];
+  images: Image[];
   attributes: {
     id: number;
     name: string;
