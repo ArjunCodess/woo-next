@@ -2,6 +2,8 @@
 
 A ready-to-use store template that connects Next.js with the WooCommerce REST API. Uses Stripe for payments.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FArjunCodess%2Fwoo-next&project-name=woo-next&repository-name=woo-next&env=WC_CONSUMER_KEY%2CWC_CONSUMER_SECRET%2CWP_WEBSITE_URL%2CWP_WEBSITE_HOSTNAME%2CNEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY%2CSTRIPE_SECRET_KEY%2CNEXT_PUBLIC_SITE_URL&envDescription=Environment+variables+required+for+woo-next)
+
 ## What This Is
 
 This is a store template made with:
